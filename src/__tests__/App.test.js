@@ -19,7 +19,7 @@ const actWait = async (amount = 0) => {
 
 describe("App component", () => {
   it("should be able to add new repository", async () => {
-    const { getByText, getByTestId } = render(<App />);
+    const { getByText, getByTestId, getByLabelText } = render(<App />);
 
     apiMock.onGet("repositories").reply(200, []);
 
@@ -32,13 +32,39 @@ describe("App component", () => {
 
     await actWait();
 
+    const inputTitle = getByLabelText("Título do repositório", {
+      selector: "input",
+    });
+    fireEvent.change(inputTitle, {
+      target: { name: "title", value: "Desafio ReactJS" },
+    });
+
+    const inputUrl = getByLabelText("Url", {
+      selector: "input",
+    });
+    fireEvent.change(inputTitle, {
+      target: { name: "url", value: "https://github.com/josepholiveira" },
+    });
+
+    const inputTechs = getByLabelText("Tecnologias", {
+      selector: "input",
+    });
+    fireEvent.change(inputTitle, {
+      target: { name: "techs", value: ["React", "Node.js"] },
+    });
+
     fireEvent.click(getByText("Adicionar"));
 
     await actWait();
 
-    expect(getByTestId("repository-list")).toContainElement(
-      getByText("Desafio ReactJS")
+    const repositoryList = getByTestId("repository-list");
+    const li = repositoryList.firstChild;
+
+    expect(li.children[0]).toHaveTextContent("Desafio ReactJS");
+    expect(li.children[1]).toHaveTextContent(
+      "https://github.com/josepholiveira"
     );
+    expect(li.children[2]).toHaveTextContent("React,Node.js");
   });
 
   it("should be able to remove repository", async () => {
@@ -62,5 +88,37 @@ describe("App component", () => {
     await actWait();
 
     expect(getByTestId("repository-list")).toBeEmpty();
+  });
+
+  it("should be able to like a repository", async () => {
+    const { getByText, getByTestId } = render(<App />);
+
+    apiMock.onGet("repositories").reply(200, [
+      {
+        id: "123",
+        url: "https://github.com/josepholiveira",
+        title: "Desafio ReactJS",
+        techs: ["React", "Node.js"],
+        likes: 1,
+      },
+    ]);
+
+    apiMock.onPost("repositories/123/like").reply(200, {
+      id: "123",
+      url: "https://github.com/josepholiveira",
+      title: "Desafio ReactJS",
+      techs: ["React", "Node.js"],
+      likes: 2,
+    });
+
+    await actWait();
+
+    fireEvent.click(getByTestId("like"));
+
+    await actWait();
+
+    const repositoryList = getByTestId("repository-list");
+    const li = repositoryList.firstChild;
+    expect(li.children[3]).toHaveTextContent("2");
   });
 });
