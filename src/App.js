@@ -92,26 +92,28 @@ function App() {
 
         <button onClick={handleAddRepository}>Adicionar</button>
       </div>
-      <ul data-testid="repository-list">
-        {repositories.map((repository) => (
-          <li key={repository.id}>
-            <h3 data-testid="repository-title">{repository.title}</h3>
-            <a href={repository.url}>{repository.url}</a>
-            <span>{repository.techs.join(",")}</span>
+      <div>
+        <ul data-testid="repository-list">
+          {repositories.map((repository) => (
+            <li key={repository.id}>
+              <span data-testid="repository-title">{repository.title}</span>
+              <a href={repository.url}>{repository.url}</a>
+              <span>{repository.techs.join(",")}</span>
 
-            <span>
-              Curtidas: {repository.likes}
-              <AiFillLike
-                data-testid="like"
-                onClick={() => handleLike(repository.id)}
-              />{" "}
-            </span>
-            <button onClick={() => handleRemoveRepository(repository.id)}>
-              Remover
-            </button>
-          </li>
-        ))}
-      </ul>
+              <span>
+                Curtidas: {repository.likes}
+                <AiFillLike
+                  data-testid="like"
+                  onClick={() => handleLike(repository.id)}
+                />{" "}
+              </span>
+              <button onClick={() => handleRemoveRepository(repository.id)}>
+                Remover
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }
