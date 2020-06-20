@@ -5,6 +5,12 @@ import "./styles.css";
 
 import api from "./services/api";
 
+const mockRepository = {
+  url: "https://github.com/josepholiveira",
+  title: "Desafio ReactJS",
+  techs: ["React", "Node.js"],
+};
+
 function App() {
   const [repositories, setRepositories] = useState([]);
   const [formData, setFormData] = useState({
@@ -24,13 +30,7 @@ function App() {
 
   async function handleAddRepository() {
     try {
-      const { title, url, techs } = formData;
-
-      const response = await api.post("/repositories", {
-        title,
-        url,
-        techs: techs.split(","),
-      });
+      const response = await api.post("/repositories", { ...mockRepository });
 
       setRepositories([...repositories, response.data]);
     } catch (err) {
